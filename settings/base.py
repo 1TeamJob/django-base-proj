@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'django_select2',
     'bootstrapform',
     'bootstrap_pagination',
+    'django_celery_beat',
 
     'apps.movies.apps.MoviesConfig',
     'apps.authentication.apps.AuthenticationConfig'
@@ -142,3 +143,11 @@ LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+
+# Celery Configuration Options
+CELERY_TIMEZONE = "Australia/Tasmania"
+CELERY_TASK_TRACK_STARTED = True
+CELERY_TASK_TIME_LIMIT = 30 * 60
+
+
+AUTH_USER_MODEL = 'authentication.User'

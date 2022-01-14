@@ -49,7 +49,9 @@ def loaddump(ctx):
 
 @task
 def run(ctx):
+    print('Migrating db')
     ctx.run('./manage.py migrate')
+    print('Collecting static')
     ctx.run('./manage.py collectstatic --noinput')
 
     cmd = ('uwsgi --http 0.0.0.0:8000 --master '
@@ -68,4 +70,3 @@ def run(ctx):
     else:
         cmd += ' --harakiri 30'
     ctx.run(cmd)
-

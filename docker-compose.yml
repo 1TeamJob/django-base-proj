@@ -13,8 +13,42 @@ services:
       - pgdata:/var/lib/postgresql/data
     ports:
       - 5432:5432
+  redis:
+    image: redis
+  celerybeat:
+    build: .
+    env_file:
+      - .env
+    volumes:
+      - .:/src
+      - ./static:/static
+      - ./media:/media
+    command:
+      /bin/bash -c "pip install -r requirements.txt; celery -A config.celery beat -l INFO --scheduler django_celery_beat.schedulers:DatabaseScheduler"
+    links:
+      - db
+      - redis
+    expose:
+      - 8000
+  celery:
+    build: .
+    env_file:
+      - .env
+    volumes:
+      - .:/src
+      - ./static:/static
+      - ./media:/media
+    command:
+      /bin/bash -c "pip install -r requirements.txt; celery -A config.celery worker -l INFO"
+    links:
+      - db
+      - redis
+    expose:
+      - 8000
   web:
     build: .
+    environment:
+      PY_AUTORELOAD: true
     env_file:
       - .env
     volumes:
@@ -25,6 +59,7 @@ services:
       /bin/bash -c "pip install -r requirements.txt; invoke run"
     links:
       - db
+      - redis
     expose:
       - 8000
   nginx:
